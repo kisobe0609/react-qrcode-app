@@ -10,3 +10,36 @@ services:
     command: sh -c "cd react-app && npm start"
     ports:
       - "3000:3000"
+  
+  db:
+    image: mysql:5.7
+    container_name: react_app_db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: react
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+      TZ: 'Asia/Tokyo'
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    volumes:
+    # - ./docker/db/data:/var/lib/mysql
+    - db-volume:/var/lib/mysql
+    ports:
+    - 3306:3306
+
+  # phpMyAdmin
+  pma:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: react_app_pma
+    ports:
+      - 8001:80
+    depends_on:
+      - db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+      PMA_HOST: db
+
+volumes:
+  db-volume:
